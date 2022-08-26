@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.4.4)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
+include(CMakePackageConfigHelpers)
 
 project(zlib C)
 
@@ -61,6 +62,7 @@ check_include_file(unistd.h Z_HAVE_UNISTD_H)
 
 if(MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
+    add_definitions(-DUNICODE -D_UNICODE)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -225,6 +227,24 @@ endif()
 if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
     install(FILES ${ZLIB_PC} DESTINATION "${INSTALL_PKGCONFIG_DIR}")
 endif()
+
+#============================================================================
+# Install Target
+#============================================================================
+set(LIBRARY_NAME zlib)
+set(LIBRARY_NAMESPACE zlib)
+string(TOLOWER ${LIBRARY_NAME} target_lower)
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_NAME})
+install(TARGETS ${LIBRARY_NAME} EXPORT ${target_lower}-targets
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+install(EXPORT ${target_lower}-targets DESTINATION ${INSTALL_CONFIGDIR} FILE ${LIBRARY_NAME}Targets.cmake NAMESPACE ${LIBRARY_NAMESPACE}:: )
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}ConfigVersion.cmake VERSION ${VERSION} COMPATIBILITY SameMajorVersion )
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}Config.cmake INSTALL_DESTINATION ${INSTALL_CONFIGDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}Config.cmake ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}ConfigVersion.cmake DESTINATION ${INSTALL_CONFIGDIR})
 
 #============================================================================
 # Example binaries

@@ -1,0 +1,5 @@
+get_filename_component(@LIBRARY_NAME@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+if(NOT TARGET @LIBRARY_NAMESPACE@::@LIBRARY_NAME@)
+    include("${@LIBRARY_NAME@_CMAKE_DIR}/@LIBRARY_NAME@Targets.cmake")
+endif()
