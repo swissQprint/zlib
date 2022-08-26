@@ -4,7 +4,7 @@ include(CMakePackageConfigHelpers)
 
 project(zlib C)
 
-set(VERSION "1.2.11")
+set(VERSION "1.2.12")
 
 option(ASM686 "Enable building i686 assembly implementation")
 option(AMD64 "Enable building amd64 assembly implementation")
