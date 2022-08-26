@@ -420,6 +420,7 @@ MINIZIP_EXTERN uLong ZEXPORT unzGetOffset (unzFile file);
 MINIZIP_EXTERN int ZEXPORT unzSetOffset64 (unzFile file, ZPOS64_T pos);
 MINIZIP_EXTERN int ZEXPORT unzSetOffset (unzFile file, uLong pos);
 
+MINIZIP_EXTERN int ZEXPORT unzSeekCurrentFile(unzFile file, ZPOS64_T pos);
 
 
 #ifdef __cplusplus

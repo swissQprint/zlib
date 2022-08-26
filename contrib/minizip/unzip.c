@@ -2119,3 +2119,32 @@ MINIZIP_EXTERN int ZEXPORT unzSetOffset (unzFile file, uLong pos)
 {
     return unzSetOffset64(file,pos);
 }
+
+MINIZIP_EXTERN int ZEXPORT unzSeekCurrentFile(unzFile file, ZPOS64_T pos)
+{
+    unz64_s* s;
+    file_in_zip64_read_info_s* info;
+
+    if(file==NULL) {
+        return UNZ_PARAMERROR;
+    }
+
+    s=(unz64_s*)file;
+    info=s->pfile_in_zip_read;
+
+    if(info==NULL) {
+        return UNZ_PARAMERROR;
+    }
+
+    // Only uncompressed data can be seeked in
+    if(info->compression_method!=0) {
+        return UNZ_INTERNALERROR;
+    }
+
+    info->rest_read_compressed = s->cur_file_info.compressed_size-pos;
+    info->rest_read_uncompressed = info->rest_read_compressed;
+    info->pos_in_zipfile = info->size_local_extrafield + info->offset_local_extrafield + pos;
+    info->stream.avail_in = 0;
+    info->stream.total_out = pos;
+    return ZSEEK64(info->z_filefunc, info->filestream, info->byte_before_the_zipfile+info->pos_in_zipfile, ZLIB_FILEFUNC_SEEK_SET);
+}
